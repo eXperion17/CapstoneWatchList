@@ -16,9 +16,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            findNavController(R.id.watchListFragment).navigate(R.id.action_watchListFragment_to_addMediaFragment)
-        }
+        /*findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
+            findNavController().navigate(R.id.action_watchListFragment_to_addMediaFragment)
+        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

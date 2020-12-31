@@ -1,7 +1,7 @@
 package com.example.capstonewatchlist.database
 
 import androidx.room.TypeConverter
-import java.util.*
+import java.sql.*
 
 class Converters {
     @TypeConverter

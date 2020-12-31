@@ -13,6 +13,8 @@ class WatchListRepository (context: Context) {
         watchListDao = database!!.watchListDao()
     }
 
+
+    //Separated into three methods for now, just to make sure the query works first.
     fun getWatchListInProgress(): LiveData<List<WatchItem>> {
         return watchListDao.getWatchListInProgress()
     }
