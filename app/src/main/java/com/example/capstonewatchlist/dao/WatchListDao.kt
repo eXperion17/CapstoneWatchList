@@ -16,10 +16,14 @@ interface WatchListDao {
     fun getWatchListInProgress(): LiveData<List<WatchItem>>
 
     @Query("SELECT * FROM watchlist_table WHERE list_id = 1 ORDER BY favorite ASC")
+    //@Query("SELECT * FROM watchlist_table ORDER BY favorite ASC")
     fun getWatchListPlanned(): LiveData<List<WatchItem>>
 
     @Query("SELECT * FROM watchlist_table WHERE list_id = 2 ORDER BY favorite ASC")
     fun getWatchListCompleted(): LiveData<List<WatchItem>>
+
+    @Query("SELECT * FROM watchlist_table")
+    fun getWatchList(): LiveData<List<WatchItem>>
 
     @Delete
     suspend fun deleteItem(item:WatchItem)

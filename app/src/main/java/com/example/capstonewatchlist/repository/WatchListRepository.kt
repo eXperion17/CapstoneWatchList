@@ -27,6 +27,11 @@ class WatchListRepository (context: Context) {
         return watchListDao.getWatchListCompleted()
     }
 
+    fun getWatchListAll(): LiveData<List<WatchItem>> {
+        return watchListDao.getWatchList()
+    }
+
+
     suspend fun insertItem(item:WatchItem) {
         watchListDao.insertItem(item)
     }

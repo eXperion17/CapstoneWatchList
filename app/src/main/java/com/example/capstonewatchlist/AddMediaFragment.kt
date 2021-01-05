@@ -76,7 +76,6 @@ class AddMediaFragment : Fragment() {
             et_currentepisode.isVisible = true
             et_episode_count.isVisible = true
         }
-
     }
 
     private fun observeSetup() {
@@ -115,7 +114,6 @@ class AddMediaFragment : Fragment() {
         if (et_episode_count.text.isNotBlank()) {
             episodeCount = String.format(et_episode_count.text.toString()).toInt()
         }
-
 
         val media = WatchItem(
             et_title.text.toString(),

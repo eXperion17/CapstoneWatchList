@@ -15,7 +15,10 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
     private val listRepository =  WatchListRepository(application.applicationContext)
     private val mainScope = CoroutineScope(Dispatchers.Main)
 
-    //val games = listRepository.getGameList()
+    val listPlanned = listRepository.getWatchListPlanned()
+    val listInProgress = listRepository.getWatchListInProgress()
+    val listCompleted = listRepository.getWatchListCompleted()
+
     val error = MutableLiveData<String>()
     val success = MutableLiveData<Boolean>()
 
