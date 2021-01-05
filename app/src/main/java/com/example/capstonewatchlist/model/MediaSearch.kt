@@ -12,9 +12,9 @@ data class MediaSearch(
     @SerializedName("genre_ids") var genres: List<Int>,
 
     //Movie Exclusives
-    @SerializedName("release_date") var releaseDate: Date,
+    @SerializedName("release_date") var releaseDate: String,
 
     //Tv Show Exclusives
-    @SerializedName("first_air_date") var firstAirDate: Date,
+    @SerializedName("first_air_date") var firstAirDate: String,
 
 )

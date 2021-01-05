@@ -5,15 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstonewatchlist.adapter.WatchListAdapter
 import com.example.capstonewatchlist.model.WatchItem
 import com.example.capstonewatchlist.viewmodel.WatchListViewModel
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_watch_list.*
 
 /**
@@ -23,6 +22,7 @@ class WatchListFragment : Fragment() {
     private val watchListViewModel: WatchListViewModel by activityViewModels();
 
     private var medias = arrayListOf<WatchItem>()
+    private var currentTab = -1
     private val watchListAdapter = WatchListAdapter(medias)
 
     override fun onCreateView(
@@ -36,10 +36,6 @@ class WatchListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.fab).setOnClickListener {
-            findNavController().navigate(R.id.action_watchListFragment_to_addMediaFragment)
-        }
-
         initViews()
     }
 
@@ -50,30 +46,22 @@ class WatchListFragment : Fragment() {
         rv_watchlist.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         rv_watchlist.adapter = watchListAdapter
 
-        tab_progress.setOnClickListener {
-            //Ignore if we're already on that tab
-            //TODO: Check if this prevention is already built in & less magic numbers
-            if (tab_base.tabMode == 0) {
-                medias.clear()
-                watchListViewModel.getWatchListInProgress().value?.toCollection(medias)
-                watchListAdapter.notifyDataSetChanged()
+        tab_base.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (currentTab != tab?.position) {
+                    medias.clear()
+                    when (tab?.position) {
+                        0 -> watchListViewModel.getWatchListInProgress().value?.toCollection(medias)
+                        1 -> watchListViewModel.getWatchListPlanned().value?.toCollection(medias)
+                        2 -> watchListViewModel.getWatchListCompleted().value?.toCollection(medias)
+                    }
+                    watchListAdapter.notifyDataSetChanged()
+                }
             }
-        }
+            //These overrides are necessary to be able to implement this listener
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
 
-        tab_planned.setOnClickListener {
-            if (tab_base.tabMode == 1) {
-                medias.clear()
-                watchListViewModel.getWatchListPlanned().value?.toCollection(medias)
-                watchListAdapter.notifyDataSetChanged()
-            }
-        }
-
-        tab_completed.setOnClickListener {
-            if (tab_base.tabMode == 2) {
-                medias.clear()
-                watchListViewModel.getWatchListCompleted().value?.toCollection(medias)
-                watchListAdapter.notifyDataSetChanged()
-            }
-        }
     }
 }

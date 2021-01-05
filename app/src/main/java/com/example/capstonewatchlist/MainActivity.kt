@@ -2,12 +2,11 @@ package com.example.capstonewatchlist
 
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,10 +15,25 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        /*findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            findNavController().navigate(R.id.action_watchListFragment_to_addMediaFragment)
-        }*/
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener { view ->
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_watchListFragment_to_addMediaFragment)
+        }
+        
+        enableFabToggler()
     }
+    
+    private fun enableFabToggler() {
+        findNavController(R.id.nav_host_fragment).addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id in arrayOf(R.id.addMediaFragment)) {
+                fab.hide()
+            } else {
+                fab.show()
+            }
+        }
+
+    }
+    
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -18,19 +18,19 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_progress"
+                android:id="@+id/tb_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/tab_in_progress" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_planned"
+                android:id="@+id/tb_planned"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/tab_planned" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_completed"
+                android:id="@+id/tb_completed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/tab_completed" />

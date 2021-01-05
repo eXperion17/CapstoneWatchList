@@ -18,6 +18,10 @@ import com.example.capstonewatchlist.model.WatchItem
 import com.example.capstonewatchlist.viewmodel.MediaFindViewModel
 import com.example.capstonewatchlist.viewmodel.WatchListViewModel
 import kotlinx.android.synthetic.main.fragment_add_media.*
+import java.sql.Date
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -57,7 +61,7 @@ class AddMediaFragment : Fragment() {
 
         btn_add.setOnClickListener {
             addMedia()
-            //findNavController().popBackStack()
+            findNavController().navigate(R.id.action_addMediaFragment_to_watchListFragment)
         }
 
         observeSetup()
@@ -86,7 +90,6 @@ class AddMediaFragment : Fragment() {
         if (et_title.text.isNotBlank()) {
             mediaFindViewModel.findMediaWithTitle(et_title.text.toString(), rb_movie.isChecked)
         }
-
     }
 
     private fun onMediaFound(results:List<MediaSearch>) {
@@ -102,8 +105,17 @@ class AddMediaFragment : Fragment() {
     }
 
     private fun addMedia() {
-        val date = if(rb_movie.isChecked)
+        //TODO: Add cancel or stop if things are left empty
+
+        var date = if(rb_movie.isChecked)
             currentItem[0].releaseDate else currentItem[0].firstAirDate
+
+        //Pre define it so it doesn't give an input error when submitting an empty field
+        var episodeCount = -1;
+        if (et_episode_count.text.isNotBlank()) {
+            episodeCount = String.format(et_episode_count.text.toString()).toInt()
+        }
+
 
         val media = WatchItem(
             et_title.text.toString(),
@@ -111,12 +123,12 @@ class AddMediaFragment : Fragment() {
             currentItem[0].poster,
             currentItem[0].backdrop,
             et_genres.text.toString(),
-            date,
+            Date.valueOf(date),
             //List ID/Type is 1, and 1 = Planned to watch
             1,
             rb_movie.isChecked,
             false,
-            String.format(et_episode_count.text.toString()).toInt()
+            episodeCount
         )
 
         watchListViewModel.insertMedia(media)
