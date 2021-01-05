@@ -7,11 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.capstonewatchlist.model.MediaSearch
+import com.example.capstonewatchlist.model.WatchItem
 import com.example.capstonewatchlist.viewmodel.MediaFindViewModel
+import com.example.capstonewatchlist.viewmodel.WatchListViewModel
 import kotlinx.android.synthetic.main.fragment_add_media.*
 
 /**
@@ -20,7 +25,11 @@ import kotlinx.android.synthetic.main.fragment_add_media.*
 class AddMediaFragment : Fragment() {
     //Using regular viewModels because the viewmodel will not be used by any other fragment
     private val mediaFindViewModel: MediaFindViewModel by viewModels();
+    //WatchList however, needs to be shared through fragments
+    private val watchListViewModel: WatchListViewModel by activityViewModels();
     private lateinit var viewContext: Context
+
+    private var currentItem = arrayListOf<MediaSearch>()
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +55,10 @@ class AddMediaFragment : Fragment() {
             showRelevantInputs()
         }
 
+        btn_add.setOnClickListener {
+            addMedia()
+            //findNavController().popBackStack()
+        }
 
         observeSetup()
         showRelevantInputs()
@@ -81,6 +94,32 @@ class AddMediaFragment : Fragment() {
         et_summary.setText(results[0].overview)
         Glide.with(viewContext).load("https://image.tmdb.org/t/p/original" + results[0].poster).into(iv_poster)
         et_genres.setText(results[0].genres.toString())
+
+        // Add the Media Search to an array that'll be reused to add additional information to
+        // the media to the WatchList, see addMedia()
+        currentItem.clear()
+        currentItem.add(results[0])
+    }
+
+    private fun addMedia() {
+        val date = if(rb_movie.isChecked)
+            currentItem[0].releaseDate else currentItem[0].firstAirDate
+
+        val media = WatchItem(
+            et_title.text.toString(),
+            et_summary.text.toString(),
+            currentItem[0].poster,
+            currentItem[0].backdrop,
+            et_genres.text.toString(),
+            date,
+            //List ID/Type is 1, and 1 = Planned to watch
+            1,
+            rb_movie.isChecked,
+            false,
+            String.format(et_episode_count.text.toString()).toInt()
+        )
+
+        watchListViewModel.insertMedia(media)
     }
 
 }

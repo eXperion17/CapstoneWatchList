@@ -1,6 +1,7 @@
 package com.example.capstonewatchlist.model
 
 import com.google.gson.annotations.SerializedName
+import java.sql.Date
 
 data class MediaSearch(
     @SerializedName("title") var title: String,
@@ -11,9 +12,9 @@ data class MediaSearch(
     @SerializedName("genre_ids") var genres: List<Int>,
 
     //Movie Exclusives
-    @SerializedName("release_date") var releaseDate: String,
+    @SerializedName("release_date") var releaseDate: Date,
 
     //Tv Show Exclusives
-    @SerializedName("first_air_date") var firstAirDate: String,
+    @SerializedName("first_air_date") var firstAirDate: Date,
 
 )
