@@ -12,16 +12,13 @@ interface WatchListDao {
 
     //Separated into three methods for now, just to make sure the query works first.
 
-    //@Query("SELECT IIF(list_id = 0, 1,0) FROM watchlist_table ORDER BY favorite ASC")
-    @Query("SELECT * FROM watchlist_table ORDER BY favorite ASC")
+    @Query("SELECT * FROM watchlist_table WHERE list_id = 0 ORDER BY  favorite ASC ")
     fun getWatchListInProgress(): LiveData<List<WatchItem>>
 
-    //@Query("SELECT IIF(list_id = 1, 1,0) FROM watchlist_table ORDER BY favorite ASC")
-    @Query("SELECT * FROM watchlist_table ORDER BY favorite ASC")
+    @Query("SELECT * FROM watchlist_table WHERE list_id = 1 ORDER BY favorite ASC")
     fun getWatchListPlanned(): LiveData<List<WatchItem>>
 
-    //@Query("SELECT IIF(list_id = 2, 1,0) FROM watchlist_table ORDER BY favorite ASC")
-    @Query("SELECT * FROM watchlist_table ORDER BY favorite ASC")
+    @Query("SELECT * FROM watchlist_table WHERE list_id = 2 ORDER BY favorite ASC")
     fun getWatchListCompleted(): LiveData<List<WatchItem>>
 
     @Delete
