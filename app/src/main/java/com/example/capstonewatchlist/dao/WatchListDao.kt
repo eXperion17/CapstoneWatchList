@@ -11,8 +11,7 @@ import com.example.capstonewatchlist.model.WatchItem
 interface WatchListDao {
 
     //Separated into three methods for now, just to make sure the query works first.
-
-    @Query("SELECT * FROM watchlist_table WHERE list_id = 0 ORDER BY  favorite ASC ")
+    /*@Query("SELECT * FROM watchlist_table WHERE list_id = 0 ORDER BY  favorite ASC ")
     fun getWatchListInProgress(): LiveData<List<WatchItem>>
 
     @Query("SELECT * FROM watchlist_table WHERE list_id = 1 ORDER BY favorite ASC")
@@ -20,7 +19,7 @@ interface WatchListDao {
     fun getWatchListPlanned(): LiveData<List<WatchItem>>
 
     @Query("SELECT * FROM watchlist_table WHERE list_id = 2 ORDER BY favorite ASC")
-    fun getWatchListCompleted(): LiveData<List<WatchItem>>
+    fun getWatchListCompleted(): LiveData<List<WatchItem>>*/
 
     @Query("SELECT * FROM watchlist_table")
     fun getWatchList(): LiveData<List<WatchItem>>

@@ -15,7 +15,7 @@ class WatchListRepository (context: Context) {
 
 
     //Separated into three methods for now, just to make sure the query works first.
-    fun getWatchListInProgress(): LiveData<List<WatchItem>> {
+    /*fun getWatchListInProgress(): LiveData<List<WatchItem>> {
         return watchListDao.getWatchListInProgress()
     }
 
@@ -25,9 +25,9 @@ class WatchListRepository (context: Context) {
 
     fun getWatchListCompleted(): LiveData<List<WatchItem>> {
         return watchListDao.getWatchListCompleted()
-    }
+    }*/
 
-    fun getWatchListAll(): LiveData<List<WatchItem>> {
+    fun getWatchList(): LiveData<List<WatchItem>> {
         return watchListDao.getWatchList()
     }
 

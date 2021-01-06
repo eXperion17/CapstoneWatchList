@@ -15,9 +15,12 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
     private val listRepository =  WatchListRepository(application.applicationContext)
     private val mainScope = CoroutineScope(Dispatchers.Main)
 
-    val listPlanned = listRepository.getWatchListPlanned()
-    val listInProgress = listRepository.getWatchListInProgress()
-    val listCompleted = listRepository.getWatchListCompleted()
+    //Consolidated from what is normally in MovieRepository
+    /*private val _watchList: MutableLiveData<List<WatchItem>> = MutableLiveData()
+    val watchList: LiveData<List<WatchItem>>
+        get() = _watchList*/
+
+    val watchList = listRepository.getWatchList()
 
     val error = MutableLiveData<String>()
     val success = MutableLiveData<Boolean>()
@@ -40,15 +43,7 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun getWatchListInProgress() : LiveData<List<WatchItem>> {
-        return listRepository.getWatchListInProgress()
-    }
-
-    fun getWatchListPlanned() : LiveData<List<WatchItem>> {
-        return listRepository.getWatchListPlanned()
-    }
-
-    fun getWatchListCompleted() : LiveData<List<WatchItem>> {
-        return listRepository.getWatchListCompleted()
+    fun getWatchListAll(): LiveData<List<WatchItem>> {
+        return listRepository.getWatchList()
     }
 }

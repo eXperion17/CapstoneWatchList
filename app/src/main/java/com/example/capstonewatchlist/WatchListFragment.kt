@@ -28,6 +28,9 @@ class WatchListFragment : Fragment() {
     private var currentTab = -1
     private val watchListAdapter = WatchListAdapter(medias)
 
+    //A 'middle man' that contains all of the watch items, medias is the filtered variant
+    private var allWatchItems = arrayListOf<WatchItem>()
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -48,18 +51,15 @@ class WatchListFragment : Fragment() {
 
         rv_watchlist.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         rv_watchlist.adapter = watchListAdapter
-        tab_base.setScrollPosition(1, 0F, true)
+        //tab_base.setScrollPosition(1, 0F, true)
         tab_base.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (currentTab != tab?.position) {
-                    medias.clear()
-                    when (tab?.position) {
-                        0 -> watchListViewModel.getWatchListInProgress()
-                        1 -> watchListViewModel.getWatchListPlanned()
-                        2 -> watchListViewModel.getWatchListCompleted()
-                    }
+                    currentTab = tab?.position!!
 
-                    //currentTab = tab?.position!!
+                    medias.clear()
+                    loadWatchList(currentTab)
+                    watchListAdapter.notifyDataSetChanged()
                 }
             }
             //These overrides are necessary to be able to implement this listener
@@ -70,34 +70,20 @@ class WatchListFragment : Fragment() {
         observeChanges()
     }
 
+    private fun loadWatchList(listID:Int) {
+        allWatchItems.forEach {
+            if (it.listId == listID) {
+                medias.add(it)
+            }
+        }
+    }
+
     private fun observeChanges() {
-        watchListViewModel.listInProgress.observe(viewLifecycleOwner, Observer { list -> list?.let {
-            if (tab_base.selectedTabPosition == 1) {
-                medias.clear()
-                medias.addAll(list)
-                watchListAdapter.notifyDataSetChanged()
+        watchListViewModel.watchList.observe(viewLifecycleOwner, Observer { list -> list?.let {
+            Toast.makeText(context, "yes " + currentTab.toString(), Toast.LENGTH_SHORT).show()
+            allWatchItems.clear()
+            allWatchItems.addAll(list)
             }
-        }
         })
-
-        watchListViewModel.listPlanned.observe(viewLifecycleOwner, Observer { list -> list?.let {
-            if (tab_base.selectedTabPosition == 0) {
-                medias.clear()
-                medias.addAll(list)
-                watchListAdapter.notifyDataSetChanged()
-            }
-        }
-        })
-
-        watchListViewModel.listCompleted.observe(viewLifecycleOwner, Observer { list -> list?.let {
-            if (tab_base.selectedTabPosition == 2) {
-                medias.clear()
-                medias.addAll(list)
-                watchListAdapter.notifyDataSetChanged()
-            }
-        }
-        })
-
-
     }
 }
