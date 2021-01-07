@@ -122,6 +122,14 @@
             android:inputType="textPersonName" />
 
         <EditText
+            android:id="@+id/et_releaseDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/add_release_date"
+            android:inputType="date" />
+
+        <EditText
             android:id="@+id/et_currentepisode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

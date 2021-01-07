@@ -89,7 +89,7 @@ class AddMediaFragment : Fragment() {
             Intent.createChooser(
                 intent,
                 "Please select..."
-            ),100)
+            ), GALLERY_REQUEST_CODE)
 
         uploadedOwnMedia = true
     }
@@ -97,7 +97,7 @@ class AddMediaFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 100) {
+        if (requestCode == GALLERY_REQUEST_CODE) {
             Glide.with(viewContext).load(data?.data).into(iv_poster)
             ownMediaLink = data?.data.toString()
         }
@@ -133,11 +133,13 @@ class AddMediaFragment : Fragment() {
     }
 
     private fun onMediaFound(results:List<MediaSearch>) {
-        if (rb_movie.isChecked)
+        if (rb_movie.isChecked) {
             et_title.setText(results[0].title)
-        else
+            et_releaseDate.setText(results[0].releaseDate)
+        } else {
             et_title.setText(results[0].showName)
-
+            et_releaseDate.setText(results[0].firstAirDate)
+        }
         uploadedOwnMedia = false;
 
         et_summary.setText(results[0].overview)
@@ -176,7 +178,7 @@ class AddMediaFragment : Fragment() {
     private fun checkIfFieldsAreEmpty():Boolean {
         var isEmpty = false
 
-        if (et_title.text.isBlank()) {
+        if (et_title.text.isBlank() || et_releaseDate.text.isBlank()) {
             isEmpty = true;
         }
 
@@ -188,14 +190,6 @@ class AddMediaFragment : Fragment() {
     }
 
     private fun addMedia() {
-        var date = "2018-01-01"
-        if (currentItem.size > 0) {
-            if (rb_movie.isChecked)
-                currentItem[0].releaseDate
-            else
-                currentItem[0].firstAirDate
-        }
-
         //Pre-define it so it doesn't give an input error when submitting an empty field
         var episodeCount = -1;
         if (et_episode_count.text.isNotBlank()) {
@@ -222,7 +216,7 @@ class AddMediaFragment : Fragment() {
             posterLink,
             backdropLink,
             et_genres.text.toString(),
-            Date.valueOf(date),
+            Date.valueOf(et_releaseDate.text.toString()),
             WatchListFragment.LIST_PLANNED,
             rb_movie.isChecked,
             false,
@@ -232,6 +226,10 @@ class AddMediaFragment : Fragment() {
         )
 
         watchListViewModel.insertMedia(media)
+    }
+
+    companion object {
+        const val GALLERY_REQUEST_CODE = 100
     }
 
 }

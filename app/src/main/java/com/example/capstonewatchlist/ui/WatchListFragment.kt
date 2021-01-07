@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -103,18 +104,36 @@ class WatchListFragment : Fragment() {
             .show()
     }
 
-    private fun createDialogMovingItem(item: WatchItem) {
-        val options = arrayOf(  resources.getString(R.string.tab_in_progress),
+    private fun createDialogMovingItem(item: WatchItem) {MaterialAlertDialogBuilder(requireContext())
+            .setTitle(resources.getString(R.string.dialog_move_title))
+            .setMessage(String.format(resources.getString(R.string.dialog_move_message), item.title))
+            .setNeutralButton(resources.getString(R.string.tab_in_progress)) { _ , _ ->
+                item.listId = LIST_IN_PROGRESS
+                watchListViewModel.updateMedia(item)
+                loadWatchList(currentTab)
+            }
+            .setNegativeButton(resources.getString(R.string.tab_planned)) { _ , _ ->
+                item.listId = LIST_PLANNED
+                watchListViewModel.updateMedia(item)
+                loadWatchList(currentTab)
+            }
+            .setPositiveButton(resources.getString(R.string.tab_completed)) { _ , _ ->
+                item.listId = LIST_COMPLETED
+                watchListViewModel.updateMedia(item)
+                loadWatchList(currentTab)
+            }
+            .show()
+
+
+        //TODO: Radio button version, however this somehow broke after implementing the image upload
+        /*val options = arrayOf(  resources.getString(R.string.tab_in_progress),
                                 resources.getString(R.string.tab_planned),
                                 resources.getString(R.string.tab_completed))
         val selected = item.listId
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.dialog_autoadd_title))
-            //.setMessage(String.format(resources.getString(R.string.dialog_move_message), item.title))
-            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)){ _, _ ->
-
-            }
+            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)){ _, _ ->}
             .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)){ _, _ ->
                 item.listId = selected
                 watchListViewModel.updateMedia(item)
@@ -122,8 +141,8 @@ class WatchListFragment : Fragment() {
             }
             .setSingleChoiceItems(options,selected) { _, _ ->
 
-            }
-            .show()
+                Toast.makeText(context,"wtf " + selected, Toast.LENGTH_SHORT).show()
+            }.show()*/
     }
 
     private fun loadWatchList(listID:Int) {
