@@ -30,4 +30,10 @@
     <string name="item_watched_tv">+</string>
     <string name="item_minus">-</string>
     <string name="item_watched_move_to">Move To...</string>
+
+
+    <string name="dialog_autoadd_title">Move to Completed?</string>
+    <string name="dialog_autoadd_message">Looks like you\'ve completed watching %1$s! Would you like to move it to the completed tab?</string>
+    <string name="dialog_autoadd_decline">Cancel</string>
+    <string name="dialog_autoadd_accept">Move</string>
 </resources>

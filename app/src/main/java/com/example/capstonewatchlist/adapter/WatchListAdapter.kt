@@ -1,19 +1,18 @@
 package com.example.capstonewatchlist.adapter
 
-import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.capstonewatchlist.R
 import com.example.capstonewatchlist.model.WatchItem
-import com.example.capstonewatchlist.viewmodel.WatchListViewModel
 import kotlinx.android.synthetic.main.item_media.view.*
 
-class WatchListAdapter(private val medias:List<WatchItem>, private val onItemUpdate: (WatchItem) -> Unit) : RecyclerView.Adapter<WatchListAdapter.ViewHolder>() {
+class WatchListAdapter(private val medias:List<WatchItem>,
+                       private val onCardUpdate: (WatchItem) -> Unit)
+    : RecyclerView.Adapter<WatchListAdapter.ViewHolder>() {
 
     val onItemChanged: () -> Unit = { Unit }
 
@@ -21,9 +20,8 @@ class WatchListAdapter(private val medias:List<WatchItem>, private val onItemUpd
 
 
         fun databind(item: WatchItem) {
-            //TODO: Databind this to the item, but make the item layout better first!!
-
-            Glide.with(itemView.context).load("https://image.tmdb.org/t/p/original" + item.poster).into(itemView.iv_poster)
+            Glide.with(itemView.context).load(
+                "https://image.tmdb.org/t/p/original" + item.poster).into(itemView.iv_poster)
             itemView.tv_title.text = item.title
             itemView.tv_genres.text = item.genres
             itemView.tv_summary.text = item.overview
@@ -66,7 +64,7 @@ class WatchListAdapter(private val medias:List<WatchItem>, private val onItemUpd
             itemView.btn_watched.setOnClickListener {
                 if (item.episodesWatched == item.totalEpisodes) {
                     //TODO: Either dialog prompt or auto move to Completed!
-                    item.listId = 2
+                    //item.listId = 2
 
                 } else item.episodesWatched++
 
@@ -99,7 +97,7 @@ class WatchListAdapter(private val medias:List<WatchItem>, private val onItemUpd
             }
 
             //Send to database?
-            onItemUpdate(item)
+            onCardUpdate(item)
         }
     }
 

@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.capstonewatchlist.adapter.WatchListAdapter
 import com.example.capstonewatchlist.model.WatchItem
 import com.example.capstonewatchlist.viewmodel.WatchListViewModel
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_watch_list.*
 
@@ -26,7 +25,7 @@ class WatchListFragment : Fragment() {
 
     private var medias = arrayListOf<WatchItem>()
     private var currentTab = -1
-    private val watchListAdapter = WatchListAdapter(medias, :: onAdapterItemUpdate)
+    private val watchListAdapter = WatchListAdapter(medias, :: onAdapterCardUpdate)
 
     //A 'middle man' that contains all of the watch items, medias is the filtered variant
     private var allWatchItems = arrayListOf<WatchItem>()
@@ -58,7 +57,6 @@ class WatchListFragment : Fragment() {
                 if (currentTab != tab?.position) {
                     currentTab = tab?.position!!
 
-                    medias.clear()
                     loadWatchList(currentTab)
                     watchListAdapter.notifyDataSetChanged()
                 }
@@ -71,12 +69,40 @@ class WatchListFragment : Fragment() {
         observeChanges()
     }
 
-    private fun onAdapterItemUpdate(item:WatchItem) {
-        watchListViewModel.updateMedia(item)
+    private fun onAdapterCardUpdate(item:WatchItem) {
+        if (!item.isMovie && (item.episodesWatched == item.totalEpisodes)) {
+            //TODO: Dialog prompt!
+            createDialogAutoMoveCompletion(item)
+        } else {
+            watchListViewModel.updateMedia(item)
+        }
+
+        //watchListAdapter.notifyDataSetChanged()
+    }
+
+    private fun createDialogAutoMoveCompletion(item: WatchItem) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(resources.getString(R.string.dialog_autoadd_title))
+            .setMessage(String.format(resources.getString(R.string.dialog_autoadd_message), item.title))
+            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { dialog, which ->
+                //cancel
+            }
+            .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { dialog, which ->
+                //accept
+                //TODO: Constants?
+                item.listId = 2;
+                watchListViewModel.updateMedia(item)
+                watchListAdapter.notifyDataSetChanged()
+                loadWatchList(currentTab)
+            }
+            .show()
     }
 
 
+
+
     private fun loadWatchList(listID:Int) {
+        medias.clear()
         //TODO: Filter on favorite and then merge them together
         allWatchItems.forEach {
             if (it.listId == listID) {
