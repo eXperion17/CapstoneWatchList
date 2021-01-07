@@ -11,11 +11,9 @@ import com.example.capstonewatchlist.model.WatchItem
 import kotlinx.android.synthetic.main.item_media.view.*
 
 class WatchListAdapter(private val medias:List<WatchItem>,
-                       private val onCardUpdate: (WatchItem) -> Unit,
+                       private val onCardUpdate: (WatchItem, Boolean) -> Unit,
                        private val onMoveItem: (WatchItem) -> Unit)
     : RecyclerView.Adapter<WatchListAdapter.ViewHolder>() {
-
-    val onItemChanged: () -> Unit = { Unit }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -27,6 +25,7 @@ class WatchListAdapter(private val medias:List<WatchItem>,
             itemView.tv_genres.text = item.genres
             itemView.tv_summary.text = item.overview
             itemView.tv_releasedate.text = item.release_date.toString()
+            updateFavorite(item.favorite)
 
             when (item.listId) {
                 0 -> itemView.tv_type.text = itemView.context.getText(R.string.info_in_progress)
@@ -34,8 +33,14 @@ class WatchListAdapter(private val medias:List<WatchItem>,
                 2 -> itemView.tv_type.text = itemView.context.getText(R.string.info_completed)
             }
 
-            itemView.layout_expanded.visibility = View.GONE
+            //Switching tabs without retracting/closing the expanded tab causes the text to
+            //stay on Close, this updates the text upon loading so that doesn't happen
+            if (itemView.layout_expanded.visibility == View.VISIBLE)
+                updateExpandedLayout(false)
+            else
+                updateExpandedLayout(true)
 
+            itemView.layout_expanded.visibility = View.GONE
 
             //Pre-hide things that aren't visible in the Movie variant
             if (item.isMovie) {
@@ -48,19 +53,21 @@ class WatchListAdapter(private val medias:List<WatchItem>,
                 itemView.btn_watched.text = itemView.context.getString(R.string.item_watched_tv)
             }
 
+            if (item.listId == 2) {
+                itemView.btn_watched.visibility = View.GONE
+            } else {
+                itemView.btn_watched.visibility = View.VISIBLE
+            }
+
+
 
             //                      Setting Click Listeners here!
 
-
             itemView.btn_expand.setOnClickListener {
-                //Toggle between the visibility states
-                if (itemView.layout_expanded.visibility == View.VISIBLE) {
-                    itemView.layout_expanded.visibility = View.GONE
-                    itemView.btn_expand.text = itemView.context.getString(R.string.item_expand)
-                } else {
-                    itemView.layout_expanded.visibility = View.VISIBLE
-                    itemView.btn_expand.text = itemView.context.getString(R.string.item_expand_open)
-                }
+                if (itemView.layout_expanded.visibility == View.VISIBLE)
+                    updateExpandedLayout(false)
+                else
+                    updateExpandedLayout(true)
             }
 
             itemView.btn_watched.setOnClickListener {
@@ -80,7 +87,7 @@ class WatchListAdapter(private val medias:List<WatchItem>,
 
             itemView.ib_favorite.setOnClickListener {
                 item.favorite = !item.favorite
-                updateCard(item)
+                updateCard(item, true)
             }
 
             itemView.btn_moveto.setOnClickListener {
@@ -88,22 +95,38 @@ class WatchListAdapter(private val medias:List<WatchItem>,
             }
         }
 
-        private fun updateCard(item: WatchItem) {
-            if (item.favorite) {
-                itemView.ib_favorite.setColorFilter(ContextCompat.getColor(itemView.context,R.color.colorPrimary))
-            } else {
-                itemView.ib_favorite.setColorFilter(ContextCompat.getColor(itemView.context,R.color.colorNonFavorite))
-            }
+        private fun updateCard(item: WatchItem, favoriteChanged:Boolean = false) {
+            updateFavorite(item.favorite)
 
             if (!item.isMovie) {
                 itemView.tv_watchprogress.text =
                     item.episodesWatched.toString() + "/" + item.totalEpisodes.toString()
             }
 
-            //Send to database?
-            onCardUpdate(item)
+            //Send to database
+            onCardUpdate(item, favoriteChanged)
+        }
+
+        private fun updateFavorite(state:Boolean) {
+            if (state) {
+                itemView.ib_favorite.setColorFilter(ContextCompat.getColor(itemView.context,R.color.colorPrimary))
+            } else {
+                itemView.ib_favorite.setColorFilter(ContextCompat.getColor(itemView.context,R.color.colorNonFavorite))
+            }
+        }
+
+        private fun updateExpandedLayout(setVisibilityTo:Boolean) {
+            if (setVisibilityTo) {
+                itemView.layout_expanded.visibility = View.VISIBLE
+                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand_open)
+            } else {
+                itemView.layout_expanded.visibility = View.GONE
+                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand)
+            }
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(

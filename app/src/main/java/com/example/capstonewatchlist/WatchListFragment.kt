@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstonewatchlist.adapter.WatchListAdapter
 import com.example.capstonewatchlist.model.WatchItem
 import com.example.capstonewatchlist.viewmodel.WatchListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_watch_list.*
 
@@ -69,17 +71,22 @@ class WatchListFragment : Fragment() {
 
         observeChanges()
 
+        createItemTouchHelper().attachToRecyclerView(rv_watchlist)
 
+        //Load the WatchItems onto the current tab
         tab_base.getTabAt(currentTab)?.select()
         loadWatchList(currentTab)
     }
 
-    private fun onAdapterCardUpdate(item:WatchItem) {
-        if (item.isMovie || (!item.isMovie && item.episodesWatched == item.totalEpisodes)) {
-            createDialogAutoMoveCompletion(item)
-        } else {
-            watchListViewModel.updateMedia(item)
+    private fun onAdapterCardUpdate(item:WatchItem, changedFavorite:Boolean) {
+        if (!changedFavorite) {
+            //Currently changing anything of the item/card triggers this function, hence why we
+            //check if favorite changed first, as the only exception to preventing this dialog
+            if (item.isMovie || (!item.isMovie && item.episodesWatched == item.totalEpisodes)) {
+                createDialogAutoMoveCompletion(item)
+            }
         }
+        watchListViewModel.updateMedia(item)
     }
 
     private fun createDialogAutoMoveCompletion(item: WatchItem) {
@@ -126,6 +133,7 @@ class WatchListFragment : Fragment() {
                 medias.add(it)
             }
         }
+
         watchListAdapter.notifyDataSetChanged()
     }
 
@@ -137,5 +145,38 @@ class WatchListFragment : Fragment() {
             loadWatchList(currentTab)
             }
         })
+    }
+
+    private fun createItemTouchHelper(): ItemTouchHelper {
+        val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            // Enables or Disables the ability to move items up and down.
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            // Callback triggered when a user swiped an item.
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                watchListViewModel.deleteMedia(medias[position])
+                showUndoOption(medias[position])
+            }
+        }
+        return ItemTouchHelper(callback)
+    }
+
+    private fun showUndoOption(item:WatchItem) {
+        val undoMessage = Snackbar.make(
+            requireView(),
+            String.format(getString(R.string.success_delete), item.title),
+            Snackbar.LENGTH_LONG
+        )
+        undoMessage.setAction(getString(R.string.undo_delete)) {
+            watchListViewModel.insertMedia(item)
+        }
+        undoMessage.show()
     }
 }

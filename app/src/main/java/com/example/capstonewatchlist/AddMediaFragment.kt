@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -60,8 +61,13 @@ class AddMediaFragment : Fragment() {
         }
 
         btn_add.setOnClickListener {
-            addMedia()
-            findNavController().popBackStack()
+            if (!checkIfFieldsAreEmpty()) {
+                addMedia()
+                findNavController().popBackStack()
+            } else {
+                Toast.makeText(context, getString(R.string.add_media_missing),
+                    Toast.LENGTH_SHORT).show()
+            }
         }
 
         observeSetup()
@@ -107,6 +113,20 @@ class AddMediaFragment : Fragment() {
         currentItem.add(results[0])
     }
 
+    private fun checkIfFieldsAreEmpty():Boolean {
+        var isEmpty = false
+
+        if (et_title.text.isBlank()) {
+            isEmpty = true;
+        }
+
+        if (rb_tv.isChecked && (et_currentepisode.text.isBlank() ||
+                                et_episode_count.text.isBlank())) {
+            isEmpty = true;
+        }
+        return isEmpty
+    }
+
     private fun addMedia() {
         var date = if(rb_movie.isChecked)
             currentItem[0].releaseDate else currentItem[0].firstAirDate
@@ -117,7 +137,7 @@ class AddMediaFragment : Fragment() {
             episodeCount = String.format(et_episode_count.text.toString()).toInt()
         }
         var currentEpisode = 0
-        if (et_episode_count.text.isNotBlank()) {
+        if (et_currentepisode.text.isNotBlank()) {
             currentEpisode = et_currentepisode.text.toString().toInt()
         }
 

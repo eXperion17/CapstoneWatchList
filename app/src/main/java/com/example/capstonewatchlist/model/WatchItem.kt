@@ -26,7 +26,6 @@ data class WatchItem (
     var isMovie: Boolean,
     @ColumnInfo(name = "favorite")
     var favorite: Boolean,
-    //TODO: Add the progress of episodes
 
     @ColumnInfo(name = "total_episodes")
     var totalEpisodes: Int,
