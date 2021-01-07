@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.fragment_watch_list.*
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class WatchListFragment : Fragment() {
+
     private val watchListViewModel: WatchListViewModel by activityViewModels();
 
     private var medias = arrayListOf<WatchItem>()
@@ -95,8 +96,7 @@ class WatchListFragment : Fragment() {
             .setMessage(String.format(resources.getString(R.string.dialog_autoadd_message), item.title))
             .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { _ , _ -> }
             .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { _ , _ ->
-                //TODO: Constants?
-                item.listId = 2;
+                item.listId = LIST_COMPLETED;
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
             }
@@ -108,17 +108,17 @@ class WatchListFragment : Fragment() {
             .setTitle(resources.getString(R.string.dialog_autoadd_title))
             .setMessage(String.format(resources.getString(R.string.dialog_move_message), item.title))
             .setNeutralButton(resources.getString(R.string.tab_in_progress)) { _ , _ ->
-                item.listId = 0
+                item.listId = LIST_IN_PROGRESS
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
             }
             .setNegativeButton(resources.getString(R.string.tab_planned)) { _ , _ ->
-                item.listId = 1
+                item.listId = LIST_PLANNED
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
             }
             .setPositiveButton(resources.getString(R.string.tab_completed)) { _ , _ ->
-                item.listId = 2
+                item.listId = LIST_COMPLETED
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
             }
@@ -127,8 +127,15 @@ class WatchListFragment : Fragment() {
 
     private fun loadWatchList(listID:Int) {
         medias.clear()
-        //TODO: Filter on favorite and then merge them together
+
+        //Use a local variable to sort the watchItems by favorite status
+        var sortedList = arrayListOf<WatchItem>()
+        sortedList.addAll(allWatchItems.sortedWith(compareBy { !it.favorite }))
+        allWatchItems.clear()
+        allWatchItems.addAll(sortedList)
+
         allWatchItems.forEach {
+            //First all favorites
             if (it.listId == listID) {
                 medias.add(it)
             }
@@ -178,5 +185,11 @@ class WatchListFragment : Fragment() {
             watchListViewModel.insertMedia(item)
         }
         undoMessage.show()
+    }
+
+    companion object {
+        const val LIST_IN_PROGRESS = 0
+        const val LIST_PLANNED = 1
+        const val LIST_COMPLETED = 2
     }
 }

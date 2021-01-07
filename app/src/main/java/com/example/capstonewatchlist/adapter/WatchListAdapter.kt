@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.capstonewatchlist.R
+import com.example.capstonewatchlist.WatchListFragment
 import com.example.capstonewatchlist.model.WatchItem
 import kotlinx.android.synthetic.main.item_media.view.*
 
@@ -28,9 +29,9 @@ class WatchListAdapter(private val medias:List<WatchItem>,
             updateFavorite(item.favorite)
 
             when (item.listId) {
-                0 -> itemView.tv_type.text = itemView.context.getText(R.string.info_in_progress)
-                1 -> itemView.tv_type.text = itemView.context.getText(R.string.info_planned)
-                2 -> itemView.tv_type.text = itemView.context.getText(R.string.info_completed)
+                WatchListFragment.LIST_IN_PROGRESS  -> itemView.tv_type.text = itemView.context.getText(R.string.info_in_progress)
+                WatchListFragment.LIST_PLANNED      -> itemView.tv_type.text = itemView.context.getText(R.string.info_planned)
+                WatchListFragment.LIST_COMPLETED    -> itemView.tv_type.text = itemView.context.getText(R.string.info_completed)
             }
 
             //Switching tabs without retracting/closing the expanded tab causes the text to
@@ -53,7 +54,7 @@ class WatchListAdapter(private val medias:List<WatchItem>,
                 itemView.btn_watched.text = itemView.context.getString(R.string.item_watched_tv)
             }
 
-            if (item.listId == 2) {
+            if (item.listId == WatchListFragment.LIST_COMPLETED) {
                 itemView.btn_watched.visibility = View.GONE
             } else {
                 itemView.btn_watched.visibility = View.VISIBLE

@@ -149,8 +149,7 @@ class AddMediaFragment : Fragment() {
             currentItem[0].backdrop,
             et_genres.text.toString(),
             Date.valueOf(date),
-            //List ID/Type is 1, and 1 = Planned to watch
-            1,
+            WatchListFragment.LIST_PLANNED,
             rb_movie.isChecked,
             false,
             episodeCount,
