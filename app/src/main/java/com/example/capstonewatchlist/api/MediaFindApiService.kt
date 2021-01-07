@@ -1,6 +1,7 @@
 package com.example.capstonewatchlist.api
 
 import com.example.capstonewatchlist.BuildConfig
+import com.example.capstonewatchlist.model.GenreSearchResult
 import com.example.capstonewatchlist.model.MediaSearchResult
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -15,4 +16,7 @@ interface MediaFindApiService {
     @GET("search/tv?api_key=$API_KEY" +
             "&language=en-US&sort_by=popularity.desc&page=1&include_adult=false")
     suspend fun getShowsWithTitle(@Query("query") title:String): MediaSearchResult
+
+    @GET("genre/movie/list?api_key=$API_KEY&language=en-US")
+    suspend fun getAllGenres(): GenreSearchResult
 }

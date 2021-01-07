@@ -16,6 +16,7 @@ class MediaFindViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val mediaFindRepository:MediaFindRepository = MediaFindRepository()
     val mediaSearchResults = mediaFindRepository.medias
+    val genreSearchResults = mediaFindRepository.genres
 
     fun findMediaWithTitle(title: String, isMovie:Boolean) {
         viewModelScope.launch {
@@ -23,7 +24,18 @@ class MediaFindViewModel(application: Application) : AndroidViewModel(applicatio
                 mediaFindRepository.findMediaWithTitle(title, isMovie)
             } catch (error:Throwable) {
                 _errorText.value = error.message
-                Log.e("Error finding media", error.cause.toString())
+                Log.e("Error finding media: ", error.cause.toString())
+            }
+        }
+    }
+
+    fun getAllGenres() {
+        viewModelScope.launch {
+            try {
+                mediaFindRepository.getAllGenres()
+            } catch (error:Throwable) {
+                _errorText.value = error.message
+                Log.e("Error finding genres: ", error.cause.toString())
             }
         }
     }

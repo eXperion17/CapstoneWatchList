@@ -10,19 +10,16 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.capstonewatchlist.model.Genre
 import com.example.capstonewatchlist.model.MediaSearch
 import com.example.capstonewatchlist.model.WatchItem
 import com.example.capstonewatchlist.viewmodel.MediaFindViewModel
 import com.example.capstonewatchlist.viewmodel.WatchListViewModel
 import kotlinx.android.synthetic.main.fragment_add_media.*
 import java.sql.Date
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -35,6 +32,8 @@ class AddMediaFragment : Fragment() {
     private lateinit var viewContext: Context
 
     private var currentItem = arrayListOf<MediaSearch>()
+
+    private var mediaGenres = arrayListOf<Int>()
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -88,6 +87,12 @@ class AddMediaFragment : Fragment() {
         mediaFindViewModel.mediaSearchResults.observe(viewLifecycleOwner, Observer {
             onMediaFound(it)
         })
+
+        mediaFindViewModel.genreSearchResults.observe(viewLifecycleOwner, Observer {
+            onGenresFound(it)
+        })
+
+
     }
 
     private fun findMedia() {
@@ -105,12 +110,35 @@ class AddMediaFragment : Fragment() {
 
         et_summary.setText(results[0].overview)
         Glide.with(viewContext).load("https://image.tmdb.org/t/p/original" + results[0].poster).into(iv_poster)
-        et_genres.setText(results[0].genres.toString())
+
+        mediaGenres.clear()
+        mediaGenres.addAll(results[0].genres)
 
         // Add the Media Search to an array that'll be reused to add additional information to
         // the media to the WatchList, see addMedia()
         currentItem.clear()
         currentItem.add(results[0])
+
+        mediaFindViewModel.getAllGenres()
+    }
+
+    private fun onGenresFound(masterGenreList:List<Genre>) {
+        var genresToString:String = ""
+
+        //For each genre that we found in the Search, cross check it with the 'master list'
+        //containing all the genres. If we have a match then add it to the string
+        mediaGenres.forEach { genre ->
+            masterGenreList.forEach {
+                if (it.id == genre) {
+                    genresToString += it.name + ", "
+                }
+            }
+        }
+
+        //Remove the last ", " we added
+        genresToString = genresToString.removeRange(genresToString.length-2, genresToString.length)
+
+        et_genres.setText(genresToString)
     }
 
     private fun checkIfFieldsAreEmpty():Boolean {
