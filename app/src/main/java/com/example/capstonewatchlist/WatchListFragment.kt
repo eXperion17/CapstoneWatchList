@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_watch_list.*
  */
 class WatchListFragment : Fragment() {
 
-    private val watchListViewModel: WatchListViewModel by activityViewModels();
+    private val watchListViewModel: WatchListViewModel by activityViewModels()
 
     private var medias = arrayListOf<WatchItem>()
     private var currentTab = 1
@@ -96,7 +96,7 @@ class WatchListFragment : Fragment() {
             .setMessage(String.format(resources.getString(R.string.dialog_autoadd_message), item.title))
             .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { _ , _ -> }
             .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { _ , _ ->
-                item.listId = LIST_COMPLETED;
+                item.listId = LIST_COMPLETED
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
             }
@@ -104,23 +104,24 @@ class WatchListFragment : Fragment() {
     }
 
     private fun createDialogMovingItem(item: WatchItem) {
+        val options = arrayOf(  resources.getString(R.string.tab_in_progress),
+                                resources.getString(R.string.tab_planned),
+                                resources.getString(R.string.tab_completed))
+        val selected = item.listId
+
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.dialog_autoadd_title))
-            .setMessage(String.format(resources.getString(R.string.dialog_move_message), item.title))
-            .setNeutralButton(resources.getString(R.string.tab_in_progress)) { _ , _ ->
-                item.listId = LIST_IN_PROGRESS
+            //.setMessage(String.format(resources.getString(R.string.dialog_move_message), item.title))
+            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)){ _, _ ->
+
+            }
+            .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)){ _, _ ->
+                item.listId = selected
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
             }
-            .setNegativeButton(resources.getString(R.string.tab_planned)) { _ , _ ->
-                item.listId = LIST_PLANNED
-                watchListViewModel.updateMedia(item)
-                loadWatchList(currentTab)
-            }
-            .setPositiveButton(resources.getString(R.string.tab_completed)) { _ , _ ->
-                item.listId = LIST_COMPLETED
-                watchListViewModel.updateMedia(item)
-                loadWatchList(currentTab)
+            .setSingleChoiceItems(options,selected) { _, _ ->
+
             }
             .show()
     }
@@ -129,7 +130,7 @@ class WatchListFragment : Fragment() {
         medias.clear()
 
         //Use a local variable to sort the watchItems by favorite status
-        var sortedList = arrayListOf<WatchItem>()
+        val sortedList = arrayListOf<WatchItem>()
         sortedList.addAll(allWatchItems.sortedWith(compareBy { !it.favorite }))
         allWatchItems.clear()
         allWatchItems.addAll(sortedList)
@@ -145,7 +146,7 @@ class WatchListFragment : Fragment() {
     }
 
     private fun observeChanges() {
-        watchListViewModel.watchList.observe(viewLifecycleOwner, Observer { list -> list?.let {
+        watchListViewModel.watchList.observe(viewLifecycleOwner, { list -> list?.let {
             allWatchItems.clear()
             allWatchItems.addAll(list)
 
