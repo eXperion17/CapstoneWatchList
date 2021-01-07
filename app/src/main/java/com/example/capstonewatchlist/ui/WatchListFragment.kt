@@ -107,7 +107,7 @@ class WatchListFragment : Fragment() {
     private fun createDialogMovingItem(item: WatchItem) {MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.dialog_move_title))
             .setMessage(String.format(resources.getString(R.string.dialog_move_message), item.title))
-            .setNeutralButton(resources.getString(R.string.tab_in_progress)) { _ , _ ->
+            .setPositiveButton(resources.getString(R.string.tab_in_progress)) { _ , _ ->
                 item.listId = LIST_IN_PROGRESS
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
@@ -117,7 +117,7 @@ class WatchListFragment : Fragment() {
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
             }
-            .setPositiveButton(resources.getString(R.string.tab_completed)) { _ , _ ->
+            .setNeutralButton(resources.getString(R.string.tab_completed)) { _ , _ ->
                 item.listId = LIST_COMPLETED
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)

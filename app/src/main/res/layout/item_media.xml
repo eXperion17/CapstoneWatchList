@@ -131,13 +131,15 @@
             android:id="@+id/layout_expanded"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="12dp">
 
             <View
                 android:id="@+id/divider3"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
+                android:background="?android:attr/listDivider"
+                android:padding="6dp" />
 
             <TextView
                 android:id="@+id/tv_summary"
