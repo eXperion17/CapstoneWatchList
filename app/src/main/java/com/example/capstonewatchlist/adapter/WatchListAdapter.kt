@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.capstonewatchlist.R
-import com.example.capstonewatchlist.WatchListFragment
+import com.example.capstonewatchlist.ui.WatchListFragment
 import com.example.capstonewatchlist.model.WatchItem
 import kotlinx.android.synthetic.main.item_media.view.*
 
@@ -20,8 +20,14 @@ class WatchListAdapter(private val medias:List<WatchItem>,
 
 
         fun databind(item: WatchItem) {
-            Glide.with(itemView.context).load(
-                "https://image.tmdb.org/t/p/original" + item.poster).into(itemView.iv_poster)
+            if (item.uploadedOwnMedia) {
+                //If we uploaded our own media, we just use the poster's url without any additions
+                Glide.with(itemView.context).load(item.poster).into(itemView.iv_poster)
+            } else {
+                Glide.with(itemView.context).load(
+                    "https://image.tmdb.org/t/p/original" + item.poster).into(itemView.iv_poster)
+            }
+
             itemView.tv_title.text = item.title
             itemView.tv_genres.text = item.genres
             itemView.tv_summary.text = item.overview

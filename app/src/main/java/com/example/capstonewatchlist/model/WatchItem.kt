@@ -31,6 +31,8 @@ data class WatchItem (
     var totalEpisodes: Int,
     @ColumnInfo(name = "episodes_watched")
     var episodesWatched: Int,
+    @ColumnInfo(name = "uploadedOwnMedia")
+    var uploadedOwnMedia: Boolean,
 
 
     @PrimaryKey(autoGenerate = true)

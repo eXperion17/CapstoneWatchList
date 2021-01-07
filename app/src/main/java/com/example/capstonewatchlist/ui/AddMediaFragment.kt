@@ -1,6 +1,7 @@
-package com.example.capstonewatchlist
+package com.example.capstonewatchlist.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.capstonewatchlist.R
 import com.example.capstonewatchlist.model.Genre
 import com.example.capstonewatchlist.model.MediaSearch
 import com.example.capstonewatchlist.model.WatchItem
@@ -34,6 +36,8 @@ class AddMediaFragment : Fragment() {
     private var currentItem = arrayListOf<MediaSearch>()
 
     private var mediaGenres = arrayListOf<Int>()
+    private var uploadedOwnMedia:Boolean = false
+    private var ownMediaLink:String = ""
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +63,10 @@ class AddMediaFragment : Fragment() {
             showRelevantInputs()
         }
 
+        btn_upload.setOnClickListener {
+            uploadImage()
+        }
+
         btn_add.setOnClickListener {
             if (!checkIfFieldsAreEmpty()) {
                 addMedia()
@@ -71,6 +79,28 @@ class AddMediaFragment : Fragment() {
 
         observeSetup()
         showRelevantInputs()
+    }
+
+    private fun uploadImage() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(
+            Intent.createChooser(
+                intent,
+                "Please select..."
+            ),100)
+
+        uploadedOwnMedia = true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 100) {
+            Glide.with(viewContext).load(data?.data).into(iv_poster)
+            ownMediaLink = data?.data.toString()
+        }
     }
 
     private fun showRelevantInputs() {
@@ -107,6 +137,8 @@ class AddMediaFragment : Fragment() {
             et_title.setText(results[0].title)
         else
             et_title.setText(results[0].showName)
+
+        uploadedOwnMedia = false;
 
         et_summary.setText(results[0].overview)
         Glide.with(viewContext).load("https://image.tmdb.org/t/p/original" + results[0].poster).into(iv_poster)
@@ -156,10 +188,15 @@ class AddMediaFragment : Fragment() {
     }
 
     private fun addMedia() {
-        var date = if(rb_movie.isChecked)
-            currentItem[0].releaseDate else currentItem[0].firstAirDate
+        var date = "2018-01-01"
+        if (currentItem.size > 0) {
+            if (rb_movie.isChecked)
+                currentItem[0].releaseDate
+            else
+                currentItem[0].firstAirDate
+        }
 
-        //Pre define it so it doesn't give an input error when submitting an empty field
+        //Pre-define it so it doesn't give an input error when submitting an empty field
         var episodeCount = -1;
         if (et_episode_count.text.isNotBlank()) {
             episodeCount = String.format(et_episode_count.text.toString()).toInt()
@@ -169,19 +206,29 @@ class AddMediaFragment : Fragment() {
             currentEpisode = et_currentepisode.text.toString().toInt()
         }
 
+        var posterLink = ""
+        var backdropLink = ""
+        if (uploadedOwnMedia) {
+            posterLink = ownMediaLink
+            backdropLink = ownMediaLink
+        } else {
+            posterLink = currentItem[0].poster
+            backdropLink = currentItem[0].backdrop
+        }
 
         val media = WatchItem(
             et_title.text.toString(),
             et_summary.text.toString(),
-            currentItem[0].poster,
-            currentItem[0].backdrop,
+            posterLink,
+            backdropLink,
             et_genres.text.toString(),
             Date.valueOf(date),
             WatchListFragment.LIST_PLANNED,
             rb_movie.isChecked,
             false,
             episodeCount,
-            currentEpisode
+            currentEpisode,
+            uploadedOwnMedia
         )
 
         watchListViewModel.insertMedia(media)

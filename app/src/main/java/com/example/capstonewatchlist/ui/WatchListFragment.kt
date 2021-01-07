@@ -1,4 +1,4 @@
-package com.example.capstonewatchlist
+package com.example.capstonewatchlist.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.capstonewatchlist.R
 import com.example.capstonewatchlist.adapter.WatchListAdapter
 import com.example.capstonewatchlist.model.WatchItem
 import com.example.capstonewatchlist.viewmodel.WatchListViewModel
@@ -94,8 +94,8 @@ class WatchListFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.dialog_autoadd_title))
             .setMessage(String.format(resources.getString(R.string.dialog_autoadd_message), item.title))
-            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { _ , _ -> }
-            .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { _ , _ ->
+            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { _, _ -> }
+            .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { _, _ ->
                 item.listId = LIST_COMPLETED
                 watchListViewModel.updateMedia(item)
                 loadWatchList(currentTab)
@@ -141,6 +141,7 @@ class WatchListFragment : Fragment() {
                 medias.add(it)
             }
         }
+
 
         watchListAdapter.notifyDataSetChanged()
     }
