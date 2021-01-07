@@ -20,6 +20,10 @@
     <string name="tab_in_progress">In Progress</string>
     <string name="tab_planned">Planned</string>
 
+    <string name="info_completed">Completed</string>
+    <string name="info_in_progress">In Progress</string>
+    <string name="info_planned">Planned to Watch</string>
+
     <string name="item_expand">Expand</string>
     <string name="item_expand_open">Close</string>
     <string name="item_watched_movie">Watched</string>

@@ -43,6 +43,16 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+
+    fun updateMedia(item:WatchItem) {
+        mainScope.launch {
+            withContext(Dispatchers.IO) {
+                listRepository.updateItem(item)
+            }
+            success.value = true
+        }
+    }
+
     fun getWatchListAll(): LiveData<List<WatchItem>> {
         return listRepository.getWatchList()
     }

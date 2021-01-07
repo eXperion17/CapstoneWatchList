@@ -1,10 +1,7 @@
 package com.example.capstonewatchlist.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.capstonewatchlist.model.WatchItem
 
 @Dao
@@ -18,5 +15,8 @@ interface WatchListDao {
 
     @Insert
     suspend fun insertItem(item:WatchItem)
+
+    @Update
+    suspend fun updateItem(item:WatchItem)
 
 }

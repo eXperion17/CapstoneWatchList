@@ -24,4 +24,8 @@ class WatchListRepository (context: Context) {
     suspend fun deleteItem(item: WatchItem) {
         watchListDao.deleteItem(item)
     }
+
+    suspend fun updateItem(item: WatchItem) {
+        watchListDao.updateItem(item)
+    }
 }

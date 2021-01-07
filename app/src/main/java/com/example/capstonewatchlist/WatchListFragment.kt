@@ -26,7 +26,7 @@ class WatchListFragment : Fragment() {
 
     private var medias = arrayListOf<WatchItem>()
     private var currentTab = -1
-    private val watchListAdapter = WatchListAdapter(medias)
+    private val watchListAdapter = WatchListAdapter(medias, :: onAdapterItemUpdate)
 
     //A 'middle man' that contains all of the watch items, medias is the filtered variant
     private var allWatchItems = arrayListOf<WatchItem>()
@@ -51,7 +51,8 @@ class WatchListFragment : Fragment() {
 
         rv_watchlist.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         rv_watchlist.adapter = watchListAdapter
-        //tab_base.setScrollPosition(1, 0F, true)
+
+
         tab_base.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (currentTab != tab?.position) {
@@ -70,7 +71,13 @@ class WatchListFragment : Fragment() {
         observeChanges()
     }
 
+    private fun onAdapterItemUpdate(item:WatchItem) {
+        watchListViewModel.updateMedia(item)
+    }
+
+
     private fun loadWatchList(listID:Int) {
+        //TODO: Filter on favorite and then merge them together
         allWatchItems.forEach {
             if (it.listId == listID) {
                 medias.add(it)
@@ -80,7 +87,6 @@ class WatchListFragment : Fragment() {
 
     private fun observeChanges() {
         watchListViewModel.watchList.observe(viewLifecycleOwner, Observer { list -> list?.let {
-            Toast.makeText(context, "yes " + currentTab.toString(), Toast.LENGTH_SHORT).show()
             allWatchItems.clear()
             allWatchItems.addAll(list)
             }

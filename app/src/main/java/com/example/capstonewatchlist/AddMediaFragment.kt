@@ -104,8 +104,6 @@ class AddMediaFragment : Fragment() {
     }
 
     private fun addMedia() {
-        //TODO: Add cancel or stop if things are left empty
-
         var date = if(rb_movie.isChecked)
             currentItem[0].releaseDate else currentItem[0].firstAirDate
 
@@ -114,6 +112,11 @@ class AddMediaFragment : Fragment() {
         if (et_episode_count.text.isNotBlank()) {
             episodeCount = String.format(et_episode_count.text.toString()).toInt()
         }
+        var currentEpisode = 0
+        if (et_episode_count.text.isNotBlank()) {
+            currentEpisode = et_currentepisode.text.toString().toInt()
+        }
+
 
         val media = WatchItem(
             et_title.text.toString(),
@@ -126,7 +129,8 @@ class AddMediaFragment : Fragment() {
             1,
             rb_movie.isChecked,
             false,
-            episodeCount
+            episodeCount,
+            currentEpisode
         )
 
         watchListViewModel.insertMedia(media)
