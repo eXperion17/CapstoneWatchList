@@ -36,19 +36,16 @@ class WatchListAdapter(private val medias:List<WatchItem>,
 
             //Switching tabs without retracting/closing the expanded tab causes the text to
             //stay on Close, this updates the text upon loading so that doesn't happen
-            if (itemView.layout_expanded.visibility == View.VISIBLE)
-                updateExpandedLayout(false)
-            else
-                updateExpandedLayout(true)
-
             itemView.layout_expanded.visibility = View.GONE
+            itemView.btn_expand.text = itemView.context.getString(R.string.item_expand)
 
-            //Pre-hide things that aren't visible in the Movie variant
+            //Pre-hide things that aren't used in the Movie variant
             if (item.isMovie) {
                 itemView.btn_minus.visibility = View.GONE
                 itemView.tv_watchprogress.visibility = View.GONE
                 itemView.btn_watched.text = itemView.context.getString(R.string.item_watched_movie)
             } else {
+                itemView.tv_watchprogress.visibility = View.VISIBLE
                 itemView.tv_watchprogress.text =
                     item.episodesWatched.toString() + "/" + item.totalEpisodes.toString()
                 itemView.btn_watched.text = itemView.context.getString(R.string.item_watched_tv)
@@ -119,10 +116,10 @@ class WatchListAdapter(private val medias:List<WatchItem>,
         private fun updateExpandedLayout(setVisibilityTo:Boolean) {
             if (setVisibilityTo) {
                 itemView.layout_expanded.visibility = View.VISIBLE
-                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand)
+                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand_open)
             } else {
                 itemView.layout_expanded.visibility = View.GONE
-                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand_open)
+                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand)
             }
         }
     }
