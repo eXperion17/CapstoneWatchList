@@ -88,8 +88,7 @@
                 android:layout_weight="0"
                 android:adjustViewBounds="false"
                 android:cropToPadding="false"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_launcher_background" />
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:id="@+id/tv_blank2"

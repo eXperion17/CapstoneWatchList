@@ -11,7 +11,7 @@
     <string name="add_title">Title</string>
     <string name="add_genres">Tags / Genres</string>
     <string name="add_runtime_tv">Amount of episodes</string>
-    <string name="add_release_date">Release date</string>
+    <string name="add_release_date">Release date (YYY-MM-DD)</string>
     <string name="add_runtime_movie">Runtime (in minutes)</string>
     <string name="add_progress_tv">Current episode</string>
     <string name="add_summary">Summary</string>
@@ -30,7 +30,7 @@
     <string name="item_watched_movie">Watched</string>
     <string name="item_watched_tv">+</string>
     <string name="item_minus">-</string>
-    <string name="item_watched_move_to">Move To...</string>
+    <string name="item_watched_move_to">Move To…</string>
 
 
     <string name="dialog_autoadd_title">Move to Completed?</string>

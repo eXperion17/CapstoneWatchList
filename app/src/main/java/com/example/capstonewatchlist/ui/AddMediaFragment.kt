@@ -28,9 +28,9 @@ import java.sql.Date
  */
 class AddMediaFragment : Fragment() {
     //Using regular viewModels because the viewmodel will not be used by any other fragment
-    private val mediaFindViewModel: MediaFindViewModel by viewModels();
+    private val mediaFindViewModel: MediaFindViewModel by viewModels()
     //WatchList however, needs to be shared through fragments
-    private val watchListViewModel: WatchListViewModel by activityViewModels();
+    private val watchListViewModel: WatchListViewModel by activityViewModels()
     private lateinit var viewContext: Context
 
     private var currentItem = arrayListOf<MediaSearch>()
@@ -65,6 +65,10 @@ class AddMediaFragment : Fragment() {
 
         btn_upload.setOnClickListener {
             uploadImage()
+        }
+
+        btn_reset.setOnClickListener {
+            resetInputFields()
         }
 
         btn_add.setOnClickListener {
@@ -114,11 +118,11 @@ class AddMediaFragment : Fragment() {
     }
 
     private fun observeSetup() {
-        mediaFindViewModel.mediaSearchResults.observe(viewLifecycleOwner, Observer {
+        mediaFindViewModel.mediaSearchResults.observe(viewLifecycleOwner, {
             onMediaFound(it)
         })
 
-        mediaFindViewModel.genreSearchResults.observe(viewLifecycleOwner, Observer {
+        mediaFindViewModel.genreSearchResults.observe(viewLifecycleOwner, {
             onGenresFound(it)
         })
 
@@ -140,7 +144,7 @@ class AddMediaFragment : Fragment() {
             et_title.setText(results[0].showName)
             et_releaseDate.setText(results[0].firstAirDate)
         }
-        uploadedOwnMedia = false;
+        uploadedOwnMedia = false
 
         et_summary.setText(results[0].overview)
         Glide.with(viewContext).load("https://image.tmdb.org/t/p/original" + results[0].poster).into(iv_poster)
@@ -179,19 +183,19 @@ class AddMediaFragment : Fragment() {
         var isEmpty = false
 
         if (et_title.text.isBlank() || et_releaseDate.text.isBlank()) {
-            isEmpty = true;
+            isEmpty = true
         }
 
         if (rb_tv.isChecked && (et_currentepisode.text.isBlank() ||
                                 et_episode_count.text.isBlank())) {
-            isEmpty = true;
+            isEmpty = true
         }
         return isEmpty
     }
 
     private fun addMedia() {
         //Pre-define it so it doesn't give an input error when submitting an empty field
-        var episodeCount = -1;
+        var episodeCount = -1
         if (et_episode_count.text.isNotBlank()) {
             episodeCount = String.format(et_episode_count.text.toString()).toInt()
         }
@@ -200,8 +204,8 @@ class AddMediaFragment : Fragment() {
             currentEpisode = et_currentepisode.text.toString().toInt()
         }
 
-        var posterLink = ""
-        var backdropLink = ""
+        var posterLink: String = ""
+        var backdropLink: String = ""
         if (uploadedOwnMedia) {
             posterLink = ownMediaLink
             backdropLink = ownMediaLink
@@ -226,6 +230,16 @@ class AddMediaFragment : Fragment() {
         )
 
         watchListViewModel.insertMedia(media)
+    }
+
+    private fun resetInputFields() {
+        et_title.setText("")
+        et_genres.setText("")
+        et_releaseDate.setText("")
+        et_summary.setText("")
+        et_currentepisode.setText("")
+        et_episode_count.setText("")
+        iv_poster.setImageResource(0)
     }
 
     companion object {
