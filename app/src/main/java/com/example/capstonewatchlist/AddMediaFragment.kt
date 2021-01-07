@@ -92,7 +92,11 @@ class AddMediaFragment : Fragment() {
     }
 
     private fun onMediaFound(results:List<MediaSearch>) {
-        et_title.setText(results[0].title)
+        if (rb_movie.isChecked)
+            et_title.setText(results[0].title)
+        else
+            et_title.setText(results[0].showName)
+
         et_summary.setText(results[0].overview)
         Glide.with(viewContext).load("https://image.tmdb.org/t/p/original" + results[0].poster).into(iv_poster)
         et_genres.setText(results[0].genres.toString())

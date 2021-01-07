@@ -11,7 +11,8 @@ import com.example.capstonewatchlist.model.WatchItem
 import kotlinx.android.synthetic.main.item_media.view.*
 
 class WatchListAdapter(private val medias:List<WatchItem>,
-                       private val onCardUpdate: (WatchItem) -> Unit)
+                       private val onCardUpdate: (WatchItem) -> Unit,
+                       private val onMoveItem: (WatchItem) -> Unit)
     : RecyclerView.Adapter<WatchListAdapter.ViewHolder>() {
 
     val onItemChanged: () -> Unit = { Unit }
@@ -40,6 +41,7 @@ class WatchListAdapter(private val medias:List<WatchItem>,
             if (item.isMovie) {
                 itemView.btn_minus.visibility = View.GONE
                 itemView.tv_watchprogress.visibility = View.GONE
+                itemView.btn_watched.text = itemView.context.getString(R.string.item_watched_movie)
             } else {
                 itemView.tv_watchprogress.text =
                     item.episodesWatched.toString() + "/" + item.totalEpisodes.toString()
@@ -62,11 +64,9 @@ class WatchListAdapter(private val medias:List<WatchItem>,
             }
 
             itemView.btn_watched.setOnClickListener {
-                if (item.episodesWatched == item.totalEpisodes) {
-                    //TODO: Either dialog prompt or auto move to Completed!
-                    //item.listId = 2
-
-                } else item.episodesWatched++
+                if (item.episodesWatched != item.totalEpisodes) {
+                    item.episodesWatched++
+                }
 
                 updateCard(item)
             }
@@ -81,6 +81,10 @@ class WatchListAdapter(private val medias:List<WatchItem>,
             itemView.ib_favorite.setOnClickListener {
                 item.favorite = !item.favorite
                 updateCard(item)
+            }
+
+            itemView.btn_moveto.setOnClickListener {
+                onMoveItem(item)
             }
         }
 

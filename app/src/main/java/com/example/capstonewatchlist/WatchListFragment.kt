@@ -25,7 +25,9 @@ class WatchListFragment : Fragment() {
 
     private var medias = arrayListOf<WatchItem>()
     private var currentTab = -1
-    private val watchListAdapter = WatchListAdapter(medias, :: onAdapterCardUpdate)
+    private val watchListAdapter = WatchListAdapter(medias,
+        :: onAdapterCardUpdate,
+        :: createDialogMovingItem)
 
     //A 'middle man' that contains all of the watch items, medias is the filtered variant
     private var allWatchItems = arrayListOf<WatchItem>()
@@ -70,8 +72,7 @@ class WatchListFragment : Fragment() {
     }
 
     private fun onAdapterCardUpdate(item:WatchItem) {
-        if (!item.isMovie && (item.episodesWatched == item.totalEpisodes)) {
-            //TODO: Dialog prompt!
+        if (item.isMovie || (!item.isMovie && item.episodesWatched == item.totalEpisodes)) {
             createDialogAutoMoveCompletion(item)
         } else {
             watchListViewModel.updateMedia(item)
@@ -84,10 +85,10 @@ class WatchListFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.dialog_autoadd_title))
             .setMessage(String.format(resources.getString(R.string.dialog_autoadd_message), item.title))
-            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { dialog, which ->
+            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { _ , _ ->
                 //cancel
             }
-            .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { _ , _ ->
                 //accept
                 //TODO: Constants?
                 item.listId = 2;
@@ -98,8 +99,30 @@ class WatchListFragment : Fragment() {
             .show()
     }
 
-
-
+    private fun createDialogMovingItem(item: WatchItem) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(resources.getString(R.string.dialog_autoadd_title))
+            .setMessage(String.format(resources.getString(R.string.dialog_move_message), item.title))
+            .setNeutralButton(resources.getString(R.string.tab_in_progress)) { _ , _ ->
+                item.listId = 0
+                watchListViewModel.updateMedia(item)
+                watchListAdapter.notifyDataSetChanged()
+                loadWatchList(currentTab)
+            }
+            .setNegativeButton(resources.getString(R.string.tab_planned)) { _ , _ ->
+                item.listId = 1
+                watchListViewModel.updateMedia(item)
+                watchListAdapter.notifyDataSetChanged()
+                loadWatchList(currentTab)
+            }
+            .setPositiveButton(resources.getString(R.string.tab_completed)) { _ , _ ->
+                item.listId = 2
+                watchListViewModel.updateMedia(item)
+                watchListAdapter.notifyDataSetChanged()
+                loadWatchList(currentTab)
+            }
+            .show()
+    }
 
     private fun loadWatchList(listID:Int) {
         medias.clear()
