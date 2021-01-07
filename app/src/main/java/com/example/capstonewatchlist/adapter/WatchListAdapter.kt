@@ -119,10 +119,10 @@ class WatchListAdapter(private val medias:List<WatchItem>,
         private fun updateExpandedLayout(setVisibilityTo:Boolean) {
             if (setVisibilityTo) {
                 itemView.layout_expanded.visibility = View.VISIBLE
-                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand_open)
+                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand)
             } else {
                 itemView.layout_expanded.visibility = View.GONE
-                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand)
+                itemView.btn_expand.text = itemView.context.getString(R.string.item_expand_open)
             }
         }
     }
