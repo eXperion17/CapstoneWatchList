@@ -15,11 +15,6 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
     private val listRepository =  WatchListRepository(application.applicationContext)
     private val mainScope = CoroutineScope(Dispatchers.Main)
 
-    //Consolidated from what is normally in MovieRepository
-    /*private val _watchList: MutableLiveData<List<WatchItem>> = MutableLiveData()
-    val watchList: LiveData<List<WatchItem>>
-        get() = _watchList*/
-
     val watchList = listRepository.getWatchList()
 
     val error = MutableLiveData<String>()

@@ -61,7 +61,7 @@ class AddMediaFragment : Fragment() {
 
         btn_add.setOnClickListener {
             addMedia()
-            findNavController().navigate(R.id.action_addMediaFragment_to_watchListFragment)
+            findNavController().popBackStack()
         }
 
         observeSetup()

@@ -24,7 +24,7 @@ class WatchListFragment : Fragment() {
     private val watchListViewModel: WatchListViewModel by activityViewModels();
 
     private var medias = arrayListOf<WatchItem>()
-    private var currentTab = -1
+    private var currentTab = 1
     private val watchListAdapter = WatchListAdapter(medias,
         :: onAdapterCardUpdate,
         :: createDialogMovingItem)
@@ -53,7 +53,6 @@ class WatchListFragment : Fragment() {
         rv_watchlist.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         rv_watchlist.adapter = watchListAdapter
 
-
         tab_base.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (currentTab != tab?.position) {
@@ -69,6 +68,10 @@ class WatchListFragment : Fragment() {
         })
 
         observeChanges()
+
+
+        tab_base.getTabAt(currentTab)?.select()
+        loadWatchList(currentTab)
     }
 
     private fun onAdapterCardUpdate(item:WatchItem) {
@@ -77,23 +80,17 @@ class WatchListFragment : Fragment() {
         } else {
             watchListViewModel.updateMedia(item)
         }
-
-        //watchListAdapter.notifyDataSetChanged()
     }
 
     private fun createDialogAutoMoveCompletion(item: WatchItem) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.dialog_autoadd_title))
             .setMessage(String.format(resources.getString(R.string.dialog_autoadd_message), item.title))
-            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { _ , _ ->
-                //cancel
-            }
+            .setNeutralButton(resources.getString(R.string.dialog_autoadd_decline)) { _ , _ -> }
             .setPositiveButton(resources.getString(R.string.dialog_autoadd_accept)) { _ , _ ->
-                //accept
                 //TODO: Constants?
                 item.listId = 2;
                 watchListViewModel.updateMedia(item)
-                watchListAdapter.notifyDataSetChanged()
                 loadWatchList(currentTab)
             }
             .show()
@@ -106,19 +103,16 @@ class WatchListFragment : Fragment() {
             .setNeutralButton(resources.getString(R.string.tab_in_progress)) { _ , _ ->
                 item.listId = 0
                 watchListViewModel.updateMedia(item)
-                watchListAdapter.notifyDataSetChanged()
                 loadWatchList(currentTab)
             }
             .setNegativeButton(resources.getString(R.string.tab_planned)) { _ , _ ->
                 item.listId = 1
                 watchListViewModel.updateMedia(item)
-                watchListAdapter.notifyDataSetChanged()
                 loadWatchList(currentTab)
             }
             .setPositiveButton(resources.getString(R.string.tab_completed)) { _ , _ ->
                 item.listId = 2
                 watchListViewModel.updateMedia(item)
-                watchListAdapter.notifyDataSetChanged()
                 loadWatchList(currentTab)
             }
             .show()
@@ -132,12 +126,15 @@ class WatchListFragment : Fragment() {
                 medias.add(it)
             }
         }
+        watchListAdapter.notifyDataSetChanged()
     }
 
     private fun observeChanges() {
         watchListViewModel.watchList.observe(viewLifecycleOwner, Observer { list -> list?.let {
             allWatchItems.clear()
             allWatchItems.addAll(list)
+
+            loadWatchList(currentTab)
             }
         })
     }
