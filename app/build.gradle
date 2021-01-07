@@ -30,6 +30,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    //Required for Material Components
+    allprojects {
+        repositories {
+            google()
+            jcenter()
+        }
+    }
 }
 
 dependencies {
@@ -64,6 +72,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 
     implementation 'com.mcxiaoke.volley:library:1.0.19'
+
+    //Material components
+    implementation 'com.google.android.material:material:1.2.1'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
